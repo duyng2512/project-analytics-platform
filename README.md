@@ -1,1 +1,1 @@
-# project-analytics-platform
+# Analytics plaform
