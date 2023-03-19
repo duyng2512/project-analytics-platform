@@ -1,0 +1,9 @@
+kafka:
+  producers:
+    GCP_ACCUM:
+      enabled: true
+      brokers: 34.126.149.122:9092
+      topics:
+        PLATFORM_ACCUM:
+          topic: platform.accum
+          enabled: true
