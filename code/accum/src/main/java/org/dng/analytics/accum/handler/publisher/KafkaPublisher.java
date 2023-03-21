@@ -1,21 +1,25 @@
 package org.dng.analytics.accum.handler.publisher;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.dng.analytics.accum.constant.Producer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderRecord;
+import reactor.kafka.sender.SenderResult;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Slf4j
-public class KafkaPublisher implements AccumPublisher<JsonObject, Map<String, Object>, Object> {
-	
+@Getter
+public class KafkaPublisher implements AccumPublisher<JsonObject, Map<String, Object>, RecordMetadata> {
 	
 	private final  Map<String, KafkaSender<String, String>> accumProducers;
 	private final Map<String, String> accumTopics;
@@ -27,20 +31,18 @@ public class KafkaPublisher implements AccumPublisher<JsonObject, Map<String, Ob
 	}
 	
 	@Override
-	public Object publish(Flux<JsonObject> flux, Map<String, Object> context) {
+	public Flux<RecordMetadata> publish(Flux<JsonObject> flux, Map<String, Object> context) {
 		String topic = accumTopics.get(Producer.Topic.PLATFORM_ACCUM);
-		accumProducers.get(Producer.GCP_ACCUM)
-			//.send(Flux.just(1, 100).map(i -> buildSenderRecord(i, topic)))
-			.send(Flux.range(1, 100)
-				      .map(i -> SenderRecord.create(new ProducerRecord<>(topic, String.valueOf(i), "Message_" + i), i)))
-			.doOnError(e -> log.error("Send failed", e))
-			.subscribe(r -> log.info("Record Data {}", r));
-		return null;
+		return accumProducers.get(Producer.GCP_ACCUM)
+			.send(flux.map(json -> buildSenderRecord(json, topic)))
+			.map(SenderResult::recordMetadata)
+			.log()
+			.doOnError(e -> log.error("Send failed", e));
 	}
 	
-	private SenderRecord<String, String, String> buildSenderRecord(Integer i, String topic) {
-		String correlationMetadata = String.valueOf(i);
-		ProducerRecord<String, String> rec = new ProducerRecord<>(topic, String.valueOf(i), "Message_" + i);
+	private SenderRecord<String, String, String> buildSenderRecord(JsonObject json, String topic) {
+		String correlationMetadata = String.valueOf(System.currentTimeMillis());
+		ProducerRecord<String, String> rec = new ProducerRecord<>(topic, UUID.randomUUID().toString(), json.toString());
 		return SenderRecord.create(rec, correlationMetadata);
 	}
 	

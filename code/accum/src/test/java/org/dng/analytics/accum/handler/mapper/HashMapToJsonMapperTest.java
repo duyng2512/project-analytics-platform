@@ -1,11 +1,13 @@
 package org.dng.analytics.accum.handler.mapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 class HashMapToJsonMapperTest {
 	@Test
 	void fromMapFluxToJson() {
@@ -16,6 +18,9 @@ class HashMapToJsonMapperTest {
 		HashMapToJsonMapper jsonMapper = new HashMapToJsonMapper();
 		Flux<Map<String, String>> sFlux = schemaMapper.process(stringFlux, new String[]{"id", "name", "salary"});
 		jsonMapper.process(sFlux, null)
-			.subscribe();
+			.map(c -> {
+				log.info(c.toString());
+				return c;
+			}).subscribe();
 	}
 }
