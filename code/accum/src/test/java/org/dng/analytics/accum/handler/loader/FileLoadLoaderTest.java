@@ -1,17 +1,19 @@
-package org.dng.analytics.accum.handler;
+package org.dng.analytics.accum.handler.loader;
 
-import org.dng.analytics.accum.TestConstant;
+import org.dng.analytics.accum.constant.TestConstant;
+import org.dng.analytics.accum.model.LoadRequest;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.stream.Stream;
 
-class FileLoadLoadHandlerTest {
-	
+class FileLoadLoaderTest {
 	
 	@Test
 	void experimentFluxReadFile() throws IOException {
@@ -31,5 +33,23 @@ class FileLoadLoadHandlerTest {
 		
 		stringFlux.subscribe(System.out::println);
 		Files.deleteIfExists(filePath);
+	}
+	
+	@Test
+	void givenFilePath_returnLineStream() {
+		URL dataFile = getClass().getClassLoader().getResource("data.txt");
+		
+		FileLoadLoader loadLoader = new FileLoadLoader();
+		assert dataFile != null;
+		LoadRequest request = LoadRequest.builder()
+			                      .query(dataFile.getPath())
+			                      .build();
+		
+		StepVerifier
+			.create(loadLoader.load(request))
+			.expectNext("1,name_tester_1,10")
+			.expectNextCount(2)
+			.expectComplete()
+			.verify();
 	}
 }
