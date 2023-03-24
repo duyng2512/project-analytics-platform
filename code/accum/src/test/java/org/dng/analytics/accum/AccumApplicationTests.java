@@ -2,6 +2,7 @@ package org.dng.analytics.accum;
 
 import com.google.gson.JsonObject;
 import org.dng.analytics.accum.handler.loader.FileLoadLoader;
+import org.dng.analytics.accum.handler.loader.StringLoadLoader;
 import org.dng.analytics.accum.handler.mapper.HashMapToJsonMapper;
 import org.dng.analytics.accum.handler.mapper.StringToHashMapMapper;
 import org.dng.analytics.accum.handler.publisher.KafkaPublisher;
@@ -20,13 +21,13 @@ class AccumApplicationTests {
 	
 	@Autowired
 	KafkaPublisher kafkaPublisher;
-	
 	@Autowired
 	FileLoadLoader fileLoadLoader;
 	
 	@Autowired
+	StringLoadLoader stringLoadLoader;
+	@Autowired
 	HashMapToJsonMapper jsonMapper;
-	
 	@Autowired
 	StringToHashMapMapper mapMapper;
 	
@@ -37,15 +38,66 @@ class AccumApplicationTests {
 		assert dataFile != null;
 		
 		Flux<String> fluxString = fileLoadLoader.load(LoadRequest.builder()
-			                                              .query(dataFile.getPath())
+			                                              .source(dataFile.getPath())
 			                                              .build());
 		Flux<Map<String, String>> fluxMap = mapMapper.process(fluxString, new String[]{"id", "name", "age"});
 		Flux<JsonObject> fluxJson = jsonMapper.process(fluxMap, null);
 		
-		StepVerifier.create(kafkaPublisher.publish(fluxJson, null))
+		StepVerifier.create(kafkaPublisher.publish(fluxJson))
 			.expectNextCount(3)
 			.expectComplete()
-			.verify();;
+			.verify();
+		;
 	}
-
+	
+	@Test
+	void stringLoad_sendMessageToKafka() {
+		
+		URL dataFile = getClass().getClassLoader().getResource("data.txt");
+		assert dataFile != null;
+		
+		Flux<String> fluxString = stringLoadLoader.load(LoadRequest.builder()
+			                                                .source("1,abc,15|2,xyz,25")
+			                                                .build());
+		Flux<Map<String, String>> fluxMap = mapMapper.process(fluxString, new String[]{"id", "name", "age"});
+		Flux<JsonObject> fluxJson = jsonMapper.process(fluxMap, null);
+		
+		StepVerifier.create(kafkaPublisher.publish(fluxJson))
+			.expectNextCount(2)
+			.expectComplete()
+			.verify();
+		;
+	}
+	
+	@Test
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	void no_type_check() {
+		URL dataFile = getClass().getClassLoader().getResource("data.txt");
+		assert dataFile != null;
+		
+		Flux flux = stringLoadLoader.load(LoadRequest.builder().source("1,abc,15|2,xyz,25").build());
+		flux = mapMapper.process(flux, new String[]{"id", "name", "age"});
+		flux = jsonMapper.process(flux, null);
+		StepVerifier.create(kafkaPublisher.publish(flux))
+			.expectNextCount(2)
+			.expectComplete()
+			.verify();
+		;
+	}
+	
+	@Test
+	@SuppressWarnings({"rawtypes"})
+	void chain_of_flux() {
+		
+		Flux flux = Flux.from(stringLoadLoader.load(LoadRequest.builder().source("1100,abc,120|1200,xyz,125").build()))
+			            .transform(s -> mapMapper.process(s, new String[]{"id", "code", "value"}))
+			            .transform(s -> jsonMapper.process(s, null))
+			            .transform(s -> kafkaPublisher.publish(s))
+			            .log();
+		
+		StepVerifier.create(flux)
+			.expectNextCount(2)
+			.expectComplete()
+			.verify();
+	}
 }

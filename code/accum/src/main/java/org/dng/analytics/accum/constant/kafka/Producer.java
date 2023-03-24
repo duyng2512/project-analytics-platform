@@ -1,4 +1,4 @@
-package org.dng.analytics.accum.constant;
+package org.dng.analytics.accum.constant.kafka;
 
 public class Producer {
 	

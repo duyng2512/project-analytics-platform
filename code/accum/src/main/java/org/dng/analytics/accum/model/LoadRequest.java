@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.dng.analytics.accum.constant.SourceType;
-
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +11,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class LoadRequest {
 	
-	private SourceType sourceType;
 	private String[] schema;
-	private String query;
-	private Integer stepSize;
-	private String filter;
+	private String source; // Can be queried, raw string, file path, ...
+	private String strategy;
 	
 }

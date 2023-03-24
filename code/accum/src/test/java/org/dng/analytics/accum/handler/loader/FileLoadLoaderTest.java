@@ -42,7 +42,7 @@ class FileLoadLoaderTest {
 		FileLoadLoader loadLoader = new FileLoadLoader();
 		assert dataFile != null;
 		LoadRequest request = LoadRequest.builder()
-			                      .query(dataFile.getPath())
+			                      .source(dataFile.getPath())
 			                      .build();
 		
 		StepVerifier
