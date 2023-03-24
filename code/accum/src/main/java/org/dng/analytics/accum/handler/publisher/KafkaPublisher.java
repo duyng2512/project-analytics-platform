@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.dng.analytics.accum.constant.Producer;
+import org.dng.analytics.accum.constant.kafka.Producer;
+import org.dng.analytics.accum.constant.type.PublishType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -19,9 +20,9 @@ import java.util.UUID;
 @Service
 @Slf4j
 @Getter
-public class KafkaPublisher implements AccumPublisher<JsonObject, Map<String, Object>, RecordMetadata> {
+public class KafkaPublisher implements AccumPublisher<JsonObject, RecordMetadata> {
 	
-	private final  Map<String, KafkaSender<String, String>> accumProducers;
+	private final Map<String, KafkaSender<String, String>> accumProducers;
 	private final Map<String, String> accumTopics;
 	
 	public KafkaPublisher(@Qualifier("accumProducers") Map<String, KafkaSender<String, String>> accumProducers,
@@ -31,13 +32,18 @@ public class KafkaPublisher implements AccumPublisher<JsonObject, Map<String, Ob
 	}
 	
 	@Override
-	public Flux<RecordMetadata> publish(Flux<JsonObject> flux, Map<String, Object> context) {
+	public Flux<RecordMetadata> publish(Flux<JsonObject> flux) {
 		String topic = accumTopics.get(Producer.Topic.PLATFORM_ACCUM);
 		return accumProducers.get(Producer.GCP_ACCUM)
-			.send(flux.map(json -> buildSenderRecord(json, topic)))
-			.map(SenderResult::recordMetadata)
-			.log()
-			.doOnError(e -> log.error("Send failed", e));
+			       .send(flux.map(json -> buildSenderRecord(json, topic)))
+			       .map(SenderResult::recordMetadata)
+			       .log()
+			       .doOnError(e -> log.error("Send failed", e));
+	}
+	
+	@Override
+	public PublishType source() {
+		return PublishType.KAFKA;
 	}
 	
 	private SenderRecord<String, String, String> buildSenderRecord(JsonObject json, String topic) {

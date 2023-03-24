@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
-public class DBLoadLoader implements AccumLoader<Object> {
+public class StringLoadLoader implements AccumLoader<String> {
 	
 	@Override
 	public SourceType source() {
-		return SourceType.DATABASE;
+		return SourceType.STRING;
 	}
 	
 	@Override
-	public Flux<Object> load(LoadRequest request) {
-		return null;
+	public Flux<String> load(LoadRequest request) {
+		return Flux.just(request.getSource().split("[|]")); // Special character
 	}
 }

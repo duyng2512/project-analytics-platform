@@ -1,6 +1,6 @@
 package org.dng.analytics.accum.handler.loader;
 
-import org.dng.analytics.accum.constant.SourceType;
+import org.dng.analytics.accum.constant.type.SourceType;
 import org.dng.analytics.accum.model.LoadRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -22,11 +22,11 @@ public class FileLoadLoader implements AccumLoader<String> {
 	public Flux<String> load(LoadRequest request) {
 		
 		// For file query is file path
-		String filePath = request.getQuery();
+		String filePath = request.getSource();
 		Path path = Path.of(filePath);
 		
 		if (!Files.exists(path)) {
-			return Flux.error(new FileNotFoundException(request.getQuery()));
+			return Flux.error(new FileNotFoundException(filePath));
 		} else {
 			return Flux.using(
 				() -> Files.lines(path),
