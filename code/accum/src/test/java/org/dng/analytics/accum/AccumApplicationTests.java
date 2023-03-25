@@ -5,7 +5,7 @@ import org.dng.analytics.accum.handler.loader.FileLoadLoader;
 import org.dng.analytics.accum.handler.loader.StringLoadLoader;
 import org.dng.analytics.accum.handler.mapper.HashMapToJsonMapper;
 import org.dng.analytics.accum.handler.mapper.StringToHashMapMapper;
-import org.dng.analytics.accum.handler.publisher.KafkaPublisher;
+import org.dng.analytics.accum.handler.publisher.KafkaJsonPublisher;
 import org.dng.analytics.accum.model.LoadRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Map;
 class AccumApplicationTests {
 	
 	@Autowired
-	KafkaPublisher kafkaPublisher;
+	KafkaJsonPublisher kafkaJsonPublisher;
 	@Autowired
 	FileLoadLoader fileLoadLoader;
 	
@@ -43,7 +43,7 @@ class AccumApplicationTests {
 		Flux<Map<String, String>> fluxMap = mapMapper.process(fluxString, new String[]{"id", "name", "age"});
 		Flux<JsonObject> fluxJson = jsonMapper.process(fluxMap, null);
 		
-		StepVerifier.create(kafkaPublisher.publish(fluxJson))
+		StepVerifier.create(kafkaJsonPublisher.publish(fluxJson))
 			.expectNextCount(3)
 			.expectComplete()
 			.verify();
@@ -62,7 +62,7 @@ class AccumApplicationTests {
 		Flux<Map<String, String>> fluxMap = mapMapper.process(fluxString, new String[]{"id", "name", "age"});
 		Flux<JsonObject> fluxJson = jsonMapper.process(fluxMap, null);
 		
-		StepVerifier.create(kafkaPublisher.publish(fluxJson))
+		StepVerifier.create(kafkaJsonPublisher.publish(fluxJson))
 			.expectNextCount(2)
 			.expectComplete()
 			.verify();
@@ -78,7 +78,7 @@ class AccumApplicationTests {
 		Flux flux = stringLoadLoader.load(LoadRequest.builder().source("1,abc,15|2,xyz,25").build());
 		flux = mapMapper.process(flux, new String[]{"id", "name", "age"});
 		flux = jsonMapper.process(flux, null);
-		StepVerifier.create(kafkaPublisher.publish(flux))
+		StepVerifier.create(kafkaJsonPublisher.publish(flux))
 			.expectNextCount(2)
 			.expectComplete()
 			.verify();
@@ -92,7 +92,7 @@ class AccumApplicationTests {
 		Flux flux = Flux.from(stringLoadLoader.load(LoadRequest.builder().source("1100,abc,120|1200,xyz,125").build()))
 			            .transform(s -> mapMapper.process(s, new String[]{"id", "code", "value"}))
 			            .transform(s -> jsonMapper.process(s, null))
-			            .transform(s -> kafkaPublisher.publish(s))
+			            .transform(s -> kafkaJsonPublisher.publish(s))
 			            .log();
 		
 		StepVerifier.create(flux)
