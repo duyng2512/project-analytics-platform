@@ -5,8 +5,9 @@ import org.dng.analytics.accum.constant.type.PublishType;
 import org.dng.analytics.accum.constant.type.SourceType;
 import org.dng.analytics.accum.handler.loader.AccumLoader;
 import org.dng.analytics.accum.handler.mapper.AccumMapper;
-import org.dng.analytics.accum.handler.mapper.StringToHashMapMapper;
 import org.dng.analytics.accum.handler.publisher.AccumPublisher;
+import org.dng.analytics.accum.manager.base.AccumManager;
+import org.dng.analytics.accum.manager.constant.ManagerType;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -40,5 +41,11 @@ public class AccumConfiguration {
 		mapper.forEach(s -> map.put(s.source(), s));
 		return map;
 	}
-
+	
+	@Bean
+	EnumMap<ManagerType, AccumManager<?, ?, ?>> accumManagers(List<AccumManager<?, ?, ?>> manager) {
+		EnumMap<ManagerType, AccumManager<?, ?, ?>> map = new EnumMap<>(ManagerType.class);
+		manager.forEach(s -> map.put(s.type(), s));
+		return map;
+	}
 }
