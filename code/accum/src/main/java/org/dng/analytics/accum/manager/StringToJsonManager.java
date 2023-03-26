@@ -7,7 +7,7 @@ import org.dng.analytics.accum.handler.loader.StringLoadLoader;
 import org.dng.analytics.accum.handler.mapper.StringToJsonMapper;
 import org.dng.analytics.accum.handler.publisher.KafkaJsonPublisher;
 import org.dng.analytics.accum.manager.base.AccumManager;
-import org.dng.analytics.accum.manager.constant.ManagerType;
+import org.dng.analytics.accum.constant.type.ManagerType;
 import org.springframework.stereotype.Component;
 
 @Component

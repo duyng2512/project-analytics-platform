@@ -7,7 +7,7 @@ import org.dng.analytics.accum.handler.loader.AccumLoader;
 import org.dng.analytics.accum.handler.mapper.AccumMapper;
 import org.dng.analytics.accum.handler.publisher.AccumPublisher;
 import org.dng.analytics.accum.manager.base.AccumManager;
-import org.dng.analytics.accum.manager.constant.ManagerType;
+import org.dng.analytics.accum.constant.type.ManagerType;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

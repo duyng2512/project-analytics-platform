@@ -21,6 +21,9 @@ public class FileLoadLoader implements AccumLoader<String> {
 	@Override
 	public Flux<String> load(LoadRequest request) {
 		
+		long from = request.getRange().getFrom();
+		long to = request.getRange().getTo();
+		
 		// For file query is file path
 		String filePath = request.getSource();
 		Path path = Path.of(filePath);
@@ -29,10 +32,11 @@ public class FileLoadLoader implements AccumLoader<String> {
 			return Flux.error(new FileNotFoundException(filePath));
 		} else {
 			return Flux.using(
-				() -> Files.lines(path),
-				Flux::fromStream,
-				Stream::close
-			);
+					() -> Files.lines(path),
+					Flux::fromStream,
+					Stream::close
+				).skip(from)
+				.take(to - from);
 		}
 	}
 }

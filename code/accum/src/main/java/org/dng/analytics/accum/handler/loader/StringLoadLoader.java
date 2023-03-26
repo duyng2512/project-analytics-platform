@@ -15,6 +15,10 @@ public class StringLoadLoader implements AccumLoader<String> {
 	
 	@Override
 	public Flux<String> load(LoadRequest request) {
-		return Flux.just(request.getSource().split("[|]")); // Special character
+		long from = request.getRange().getFrom();
+		long to = request.getRange().getTo();
+		return Flux.just(request.getSource().split("[|]"))
+			       .skip(from)
+			       .take(to - from);
 	}
 }
