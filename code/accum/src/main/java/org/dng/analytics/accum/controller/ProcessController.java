@@ -3,7 +3,7 @@ package org.dng.analytics.accum.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dng.analytics.accum.manager.base.AccumManager;
-import org.dng.analytics.accum.manager.constant.ManagerType;
+import org.dng.analytics.accum.constant.type.ManagerType;
 import org.dng.analytics.accum.model.LoadRequest;
 import org.dng.analytics.accum.model.LoadResponse;
 import org.springframework.web.bind.annotation.PostMapping;

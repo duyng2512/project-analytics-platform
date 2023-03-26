@@ -1,12 +1,9 @@
 package org.dng.analytics.accum.manager.base;
 
-import org.dng.analytics.accum.constant.type.MapType;
-import org.dng.analytics.accum.constant.type.PublishType;
-import org.dng.analytics.accum.constant.type.SourceType;
 import org.dng.analytics.accum.handler.loader.AccumLoader;
 import org.dng.analytics.accum.handler.mapper.AccumMapper;
 import org.dng.analytics.accum.handler.publisher.AccumPublisher;
-import org.dng.analytics.accum.manager.constant.ManagerType;
+import org.dng.analytics.accum.constant.type.ManagerType;
 import org.dng.analytics.accum.model.LoadRequest;
 import org.dng.analytics.accum.model.LoadResponse;
 import org.dng.analytics.accum.support.LoadResponseFactory;

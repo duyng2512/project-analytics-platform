@@ -1,4 +1,4 @@
-package org.dng.analytics.accum.manager.constant;
+package org.dng.analytics.accum.constant.type;
 
 public enum ManagerType {
 	

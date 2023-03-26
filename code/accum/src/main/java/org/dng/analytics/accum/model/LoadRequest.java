@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.dng.analytics.accum.manager.constant.ManagerType;
+import org.dng.analytics.accum.constant.type.ManagerType;
+import org.dng.analytics.accum.constant.type.SourceType;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +14,28 @@ import org.dng.analytics.accum.manager.constant.ManagerType;
 public class LoadRequest {
 	
 	private String[] schema;
-	private String source; // Can be queried, raw string, file path, ...
+	private Source source; // Can be queried, raw string, file path, ...
 	private ManagerType strategy;
+	private Range range;
+	
+	
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class Range {
+		private int to;
+		private int from;
+	}
+	
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class Source {
+		private SourceType type;
+		private String dataSource;
+		private String query;
+		private boolean cache;
+	}
 }
