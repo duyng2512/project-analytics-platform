@@ -3,7 +3,7 @@ package org.dng.analytics.accum.config.kafka;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.dng.analytics.accum.config.properties.KafkaConfigurationProperties;
+import org.dng.analytics.accum.config.properties.KafkaProperties;
 import org.dng.analytics.accum.config.properties.base.BaseKafkaConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class KafkaProducerConfig {
 	
-	private final KafkaConfigurationProperties properties;
+	private final KafkaProperties properties;
 	
 	@Bean
 	public Map<String, KafkaSender<String, String>> accumProducers() {

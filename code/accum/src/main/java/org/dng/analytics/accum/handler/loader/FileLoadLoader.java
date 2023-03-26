@@ -25,7 +25,7 @@ public class FileLoadLoader implements AccumLoader<String> {
 		long to = request.getRange().getTo();
 		
 		// For file query is file path
-		String filePath = request.getSource();
+		String filePath = request.getSource().getDataSource();
 		Path path = Path.of(filePath);
 		
 		if (!Files.exists(path)) {

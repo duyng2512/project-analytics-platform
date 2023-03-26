@@ -17,7 +17,7 @@ public class StringLoadLoader implements AccumLoader<String> {
 	public Flux<String> load(LoadRequest request) {
 		long from = request.getRange().getFrom();
 		long to = request.getRange().getTo();
-		return Flux.just(request.getSource().split("[|]"))
+		return Flux.just(request.getSource().getDataSource().split("[|]"))
 			       .skip(from)
 			       .take(to - from);
 	}
