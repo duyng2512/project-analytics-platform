@@ -1,4 +1,4 @@
-package org.dng.analytics.accum.config.kafka;
+package org.dng.analytics.accum.config.properties.base;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

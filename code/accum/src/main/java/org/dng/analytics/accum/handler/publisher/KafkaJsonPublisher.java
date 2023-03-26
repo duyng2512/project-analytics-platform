@@ -34,7 +34,7 @@ public class KafkaJsonPublisher implements AccumPublisher<JsonObject, RecordMeta
 	@Override
 	public Flux<RecordMetadata> publish(Flux<JsonObject> flux) {
 		String topic = accumTopics.get(Producer.Topic.PLATFORM_ACCUM);
-		return accumProducers.get(Producer.GCP_ACCUM)
+		return accumProducers.get(Producer.Cluster.GCP_ACCUM)
 			       .send(flux.map(json -> buildSenderRecord(json, topic)))
 			       .map(SenderResult::recordMetadata)
 			       .log()

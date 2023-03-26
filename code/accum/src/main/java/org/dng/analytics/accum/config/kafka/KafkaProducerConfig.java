@@ -3,7 +3,8 @@ package org.dng.analytics.accum.config.kafka;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.dng.analytics.accum.config.properties.KafkaConfigurationProperties;
+import org.dng.analytics.accum.config.properties.base.BaseKafkaConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.kafka.sender.KafkaSender;
@@ -31,7 +32,6 @@ public class KafkaProducerConfig {
 				props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 				props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 				SenderOptions<String, String> senderOptions = SenderOptions.create(props);
-				
 				map.put(key, KafkaSender.create(senderOptions));
 			});
 		
@@ -42,7 +42,7 @@ public class KafkaProducerConfig {
 	public Map<String, String> accumTopics() {
 		Map<String, String> map = new HashMap<>();
 		
-		properties.producers.values()
+		properties.getProducers().values()
 			.stream()
 			.filter(BaseKafkaConfigurationProperties.ProducerConfig::isEnabled)
 			.map(BaseKafkaConfigurationProperties.ProducerConfig::getTopics)
