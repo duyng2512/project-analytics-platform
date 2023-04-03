@@ -10,18 +10,19 @@ import org.dng.analytics.accum.support.LoadResponseFactory;
 import reactor.core.publisher.Mono;
 
 public abstract class AccumManager<I, M, O> {
-	
-	protected AccumLoader<I> loader;
-	protected AccumMapper<I, M> mapper;
-	protected AccumPublisher<M, O> publisher;
-	
-	public abstract ManagerType type();
-	public Mono<LoadResponse> handle(LoadRequest request) {
-		
-		return loader.load(request)
-			       .transform(s -> mapper.process(s, request.getSchema()))
-			       .transform(s -> publisher.publish(s))
-			       .reduce(LoadResponseFactory.successLoadRes(), (loadResponse, o) -> loadResponse.incRec())
-			       .onErrorResume(throwable -> Mono.just(LoadResponseFactory.errorLoadRes(throwable)));
-	}
+
+    protected AccumLoader<I> loader;
+    protected AccumMapper<I, M> mapper;
+    protected AccumPublisher<M, O> publisher;
+
+    public abstract ManagerType type();
+
+    public Mono<LoadResponse> handle(LoadRequest request) {
+
+        return loader.load(request)
+                .transform(s -> mapper.process(s, request.getSchema()))
+                .transform(s -> publisher.publish(s))
+                .reduce(LoadResponseFactory.successLoadRes(), (loadResponse, o) -> loadResponse.incRec())
+                .onErrorResume(throwable -> Mono.just(LoadResponseFactory.errorLoadRes(throwable)));
+    }
 }

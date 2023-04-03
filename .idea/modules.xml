@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/code/accum/accum.iml" filepath="$PROJECT_DIR$/code/accum/accum.iml" />
-      <module fileurl="file://$PROJECT_DIR$/code/platform.iml" filepath="$PROJECT_DIR$/code/platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/project-analytics-platform.iml" filepath="$PROJECT_DIR$/.idea/project-analytics-platform.iml" />
     </modules>
   </component>

@@ -2,7 +2,7 @@ kafka:
   producers:
     GCP_ACCUM:
       enabled: true
-      brokers: 34.126.149.122:9092
+      brokers: 34.126.107.155:9092
       topics:
         PLATFORM_ACCUM:
           topic: platform.accum
@@ -11,12 +11,12 @@ kafka:
 spring:
   datasource:
     postgres:
-      url: jdbc:postgresql://34.126.149.122:5432/platform-accum
+      url: jdbc:postgresql://34.126.107.155:5432/platform-accum
       username: root
       password: root
       driverClassName: org.postgresql.Driver
     mysql:
-      url: jdbc:mysql://34.126.149.122:6603/platform-accum
+      url: jdbc:mysql://34.126.107.155:6603/platform-accum
       username: root
       password: root
       driverClassName: com.mysql.cj.jdbc.Driver

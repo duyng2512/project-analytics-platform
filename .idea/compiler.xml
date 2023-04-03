@@ -11,8 +11,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="accum" target="11" />
-      <module name="platform" target="11" />
       <module name="source-service" target="11" />
     </bytecodeTargetLevel>
   </component>
